@@ -1,6 +1,6 @@
 In Slicer’s Python Interactor, you can hide all segmentations (all loaded segmentation nodes) by turning off their display nodes:
 
-# Hide all segmentation visualizations (Options 2D + 3D) in the whole scene
+## Hide all segmentation visualizations (Options 2D + 3D) in the whole scene
 ```
 for segNode in slicer.util.getNodesByClass("vtkMRMLSegmentationNode"):
     dispNode = segNode.GetDisplayNode()
@@ -12,7 +12,7 @@ for segNode in slicer.util.getNodesByClass("vtkMRMLSegmentationNode"):
 
 If you want to “keep the segmentation node visible, but hide every individual segment inside it,” use this instead:
 
-# Hide all segments inside every segmentation node
+## Hide all segments inside every segmentation node
 ```
 for segNode in slicer.util.getNodesByClass("vtkMRMLSegmentationNode"):
     dispNode = segNode.GetDisplayNode()
@@ -22,4 +22,16 @@ for segNode in slicer.util.getNodesByClass("vtkMRMLSegmentationNode"):
     for i in range(segmentation.GetNumberOfSegments()):
         segId = segmentation.GetNthSegmentID(i)
         dispNode.SetSegmentVisibility(segId, False)
+```
+### If you want all segmentations to show as 3D renders (closed surfaces), run this in Slicer’s Python Interactor:
+**Use with care! This can cause a crash if too many segmentations are rendered!**
+```
+for segNode in slicer.util.getNodesByClass("vtkMRMLSegmentationNode"):
+    seg = segNode.GetSegmentation()
+
+    # "Smoothing factor" conversion parameter (0 = no smoothing)
+    seg.SetConversionParameter("Smoothing factor", "0")
+
+    # Recreate/update the closed surface using the new parameter
+    segNode.CreateClosedSurfaceRepresentation()
 ```
