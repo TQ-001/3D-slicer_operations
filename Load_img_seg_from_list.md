@@ -99,11 +99,14 @@ with open(summit_list_file, 'r') as f:
 
 print(f"Found {len(summit_ids)} SUMMIT IDs to process.")
 
+ids = summit_ids[5:6] # Note: You can use summit_ids[:5] to test loading just the first 5
+print(f"Loading {len(ids)} IDs ...")
 # Loop through each ID and load the volume
-for scan_id in summit_ids: # Note: You can use summit_ids[:5] to test loading just the first 5
+for i, scan_id in enumerate(ids): 
     try:
         # ID format: <pid>_<year_tag>
-        pid, year_tag = scan_id.split('_')
+        # We split only on the FIRST underscore to isolate the pid
+        pid, year_tag = scan_id.split('_', 1)
     except ValueError:
         print(f"Skipping invalid ID format: {scan_id}")
         continue
@@ -114,10 +117,10 @@ for scan_id in summit_ids: # Note: You can use summit_ids[:5] to test loading ju
     
     # Check existence and load
     if os.path.exists(path_primary):
-        print(f"Loading {scan_id} from SummitVeolityRecon...")
+        print(f"[{i+1}/{len(ids)}] | Loading {scan_id} from SummitVeolityRecon...")
         slicer.util.loadVolume(path_primary)
     elif os.path.exists(path_secondary):
-        print(f"Loading {scan_id} from SummitLung50...")
+        print(f"[{i+1}/{len(ids)}] | Loading {scan_id} from SummitLung50...")
         slicer.util.loadVolume(path_secondary)
     else:
         print(f"Warning: Could not find {scan_id} in either target directory.")
@@ -144,8 +147,11 @@ with open(leeds_list_file, 'r') as f:
 
 print(f"Found {len(leeds_ids)} Leeds IDs to process.")
 
+ids = leeds_ids[:5] # Note: You can use leeds_ids[:5] to test loading just the first 5
+print(f"Loading {len(ids)} IDs ...")
+
 # Loop through each ID and load the volume
-for scan_id in leeds_ids[:5]: # Note: You can use leeds_ids[:5] to test loading just the first 5
+for i, scan_id in enumerate(ids): 
     # ID format: ylst-<pid>-<serie_num>
     parts = scan_id.split('-')
     if len(parts) < 3:
@@ -160,10 +166,10 @@ for scan_id in leeds_ids[:5]: # Note: You can use leeds_ids[:5] to test loading 
     
     # Check existence and load
     if os.path.exists(path_primary):
-        print(f"Loading {scan_id} from soft_recon...")
+        print(f"[{i+1}/{len(ids)}] | Loading {scan_id} from soft_recon...")
         slicer.util.loadVolume(path_primary)
     elif os.path.exists(path_secondary):
-        print(f"Loading {scan_id} from lung_recon...")
+        print(f"[{i+1}/{len(ids)}] | Loading {scan_id} from lung_recon...")
         slicer.util.loadVolume(path_secondary)
     else:
         print(f"Warning: Could not find {scan_id} in either target directory.")
